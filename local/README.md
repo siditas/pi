@@ -22,3 +22,11 @@ Config and tooling for running pi against Qwen3.6-35B-A3B (Q4_K_M) on an RTX 508
 Do not use the groxaxo IQ4_XS quant of this model — it emits garbage on every prompt (checksum matches HF; the file itself is bad).
 
 Paths in the scripts are absolute to this machine (`/root/models/...`, `/root/llama.cpp/build/bin`).
+
+## Playwright MCP from WSL (browser tools in pi)
+
+`playwright-ig.ts` (goes in `~/.pi/agent/extensions/`) launches a Windows Chromium via `start-chromium.ps1`, attaches `@playwright/mcp` to it over CDP, and mirrors 7 `browser_*` tools into pi.
+
+Headed Chrome ignores `--remote-debugging-address` and binds CDP to `127.0.0.1` only, so WSL (NAT mode) can't reach it at the Windows gateway IP. `cdp-relay.ps1` is a user-level TCP relay (`0.0.0.0:9223 → 127.0.0.1:9222`, no admin) that `start-chromium.ps1` now starts automatically; the extension connects to 9223. Verified end to end: the local model navigated to example.com and read the heading. Cold start of the extension is ~2 min (npx + Chromium launch + MCP handshake).
+
+The three `browser_*`-related files live on the Windows side at `C:\Users\awsid\pi-ig\`; copies here are snapshots.
