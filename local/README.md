@@ -29,4 +29,12 @@ Paths in the scripts are absolute to this machine (`/root/models/...`, `/root/ll
 
 Headed Chrome ignores `--remote-debugging-address` and binds CDP to `127.0.0.1` only, so WSL (NAT mode) can't reach it at the Windows gateway IP. `cdp-relay.ps1` is a user-level TCP relay (`0.0.0.0:9223 → 127.0.0.1:9222`, no admin) that `start-chromium.ps1` now starts automatically; the extension connects to 9223. Verified end to end: the local model navigated to example.com and read the heading. Cold start of the extension is ~2 min (npx + Chromium launch + MCP handshake).
 
-The three `browser_*`-related files live on the Windows side at `C:\Users\awsid\pi-ig\`; copies here are snapshots.
+## This directory is the source of truth
+
+Nothing runs from loose copies any more:
+
+- `~/.pi/agent/settings.json` → `"extensions": ["/root/pi-mono/local/playwright-ig.ts"]` (loose copy retired to `~/.pi/agent/extensions-disabled/`).
+- The extension resolves `start-chromium.ps1` next to itself and hands Windows the `\\wsl.localhost\Ubuntu\...` path via `wslpath -w`; that script starts `cdp-relay.ps1` from the same directory. The old `C:\Users\awsid\pi-ig\` copies are unused.
+- `/root/start-llama.sh` and `/root/srv-sweep.sh` are symlinks into here.
+- `package.json` here holds the extension's only dependency (`@modelcontextprotocol/sdk`); run `npm install` in this directory after cloning. `node_modules` is gitignored.
+- `models.json` still has to be copied to `~/.pi/agent/models.json` by hand.

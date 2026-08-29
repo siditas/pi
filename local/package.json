@@ -1,0 +1,6 @@
+{
+  "name": "pi-local-tuning",
+  "private": true,
+  "description": "Local llama.cpp + Playwright MCP setup for pi. Extension deps live here so the repo stays clean.",
+  "dependencies": { "@modelcontextprotocol/sdk": "1.30.0" }
+}
